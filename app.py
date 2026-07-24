@@ -2,59 +2,35 @@ import streamlit as st
 import pandas as pd
 from numpy.random import default_rng as rng
 
+st.set_page_config(layout="wide")
 
-st.title(":rainbow[Telecom X Latinoamérica: Análisis de Evasión de Clientes]", text_alignment='center')
+st.title(":rainbow[DASHBOARD APP]", text_alignment='center')
 
 st.subheader(":violet[**Descripción del proyecto**]", divider="rainbow")
 
 proyecto = '''
-El desafío **_Telecom X_** forma parte de la formación de Data Science del programa ONE, especificamente del curso Aprendiendo hacer ETL.
+El proyecto es la continuación de los desafíos **_Telecom X Latinoamérica parte 1_** y **_parte 2_**. Aquí tomamos el análisis y modelado predictivo de los dos proyectos mencionados y los ponemos en una aplicación web que consiste de un dasboard interativo hecho con la tecnología Streamlit.
 
-La empresa de telecomunicaciones **_Telecom X_** está enfrentando una alta tasa de cancelación y necesita comprender los factores que llevan a la pérdida de clientes.
+La empresa de telecomunicaciones **_Telecom X Latinoamérica_** está enfrentando una alta tasa de cancelación y necesita, en primer lugar, comprender los factores que llevan a la pérdida de clientes y, en segundo lugar, anticiparse al problema de la cancelación. El challenge parte 1 consistió en recopilar, procesar y analizar los datos con el objetivo de identificar los factores que influyen en la baja de clientes. Una vez indentificados los patrones o tendencias que llevan a las personas a cancelar los servicios de la empresa, desarrollamos modelos de clasificación capaces de prever qué clientes tienen mayor probabilidad de cancelar sus servicios. 
 
-El challenge consiste en recopilar, procesar y analizar los datos utilizando las bibliotecas Pandas, Matplotlib y Seaborn, con el objetivo de identificar los factores que están influyendo en la baja de clientes.
+El proyecto responde a la necesidad de poner las soluciones encontradas en los desafíos anteriores en una aplicación web que sea de fácil acceso.
 
-Para conocer qué razones están llevando a los clientes a darse de baja realizamos los siguientes pasos:
- 1. Extraer los datos desde una API.
- 2. Limpieza  y transformaciones de los datos.
- 3. Análisis exploratorio de los datos. 
- 4. Confección de un informe con los resultados y las recomendaciones para afrontar el problema de las cancelaciones.
+La **Dashaboard App** tiene dos partes:
+1. Análisis exploratorio de evasión de clientes.
+2. Servicio de predicción de evasión.
+
 '''
 st.markdown(proyecto)
 
-st.subheader(":violet[**Diccionario de datos**]")
+pages = {
+    "Acerca de": [
+        st.Page("app.py", title="Dashboard App")
+    ],
+    "Servicios": [
+        st.Page("analisis.py", title="Analisis exploratorio")
+    ]
+}
 
-col_1, col_2 = st.columns(2)
+pg = st.navigation(pages)
 
-with col_1:
-    x = st.slider('This is a slider', 1,10)
-with col_2:
-    st.write("El valor elegido de :red[***x***]", x)
-
-st.subheader(":violet[**Vista previa**]")
-
-df = pd.DataFrame(rng(0).standard_normal((20, 3)), columns=["a", "b", "c"])
-
-st.area_chart(df)
-
-df = pd.DataFrame(
-    {
-        "col1": list(range(20)),
-        "col2": rng(0).standard_normal(20),
-        "col3": rng(1).standard_normal(20),
-    }
-)
-
-st.area_chart(
-    df,
-    x="col1",
-    y=["col2", "col3"],
-    color=["#FF000080", "#0000FF80"],
-)
-
-with st.sidebar:
-    st.title("Menú")
-    st.header("Acerca del proyecto")
-    st.write("This is my first app with STREAMLIT :)")
-    st.header("Informe")
-    st.header("ML Predicción")
+pg.run()
