@@ -117,7 +117,7 @@ st.divider()
 
 columnas_numericas = ["Tenure", "ChargesMonthly", "ChargesTotal"]
 
-col1, _ = st.columns([.5, .5])
+col1, col2 = st.columns([.5, .5])
 
 with col1:
     filtro_2 = st.selectbox("Filtrar por categoría", columnas_numericas)
@@ -275,7 +275,7 @@ with col5:
 st.divider()
 
 st.header("🤔​:violet[**Conclusiones**]")
-st.html("<ul style='font-family: roboto; font-weight: bold;'>"
+st.html("<ul style='font-family: sans-serif; font-weight: bold;'>"
             "<li> ✅ El género no es un factor que influye en la fuga de clientes.</li>"
             "<br>"
             "<li> ❌ Los clientes mayores a 65 años tienen una alta tasa de renuncia(42%) en comparación con los clientes menores de 65 años(24%).</li>"
@@ -304,9 +304,16 @@ st.html(
     <style>
         .recomendaciones { 
                     fontsize: 24px;
-                    font-family: roboto;
+                    font-family: sans-serif;
                     font-weight: bold;
         }
+
+        .subtitulos {
+            color: violet;
+            font-family: sans-serif;
+            font-weight: bold;
+        }
+
     </style>"
     
     <p class="recomendaciones">A partir de los resultados se puede identificar que el problema de la evasión de clientes es un problema multicausal cuyas causas están relacionadas con la satisfacción de cada cliente con el servicio o los servicios contratados.
@@ -318,17 +325,25 @@ st.html(
     <ol class="recomendaciones">
         <li>Los usuarios que contrataron fibra óptica y que tienen un paquete de servicios extras.</li>
         <li>Los usuarios que contrataron pocos servicios y de baja permanencia.</li>
-        <li>Los primeros adquirieron principalemte entre 2 a 5 servicios extras. Esto indica que son personas con capacidad de pago, dado que los churners son las personas que más pagaron mensualmente. No obstante, se dan de baja porque no se encuentran satisfechos con los servicios contratados, principalmente con la fibra óptica.</li>
     </ol>
+
+    <h2 class="subtitulos"><i>Usuarios con fibra óptica y número de servicios</i></h2>
     <p class="recomendaciones">
+        Los primeros adquirieron principalemte entre 2 a 5 servicios extras. Esto indica que son personas con capacidad de pago, dado que los churners son las personas que más pagaron mensualmente. No obstante, se dan de baja porque no se encuentran satisfechos con los servicios contratados, principalmente con la fibra óptica.
+    </p>
+
+    <h2 class="subtitulos"><i>Usuarios con pocos servicios y baja permanencia</i></h2>
+    <p class="recomendaciones">         
          En los segundos usuarios, destacan aquellos con 0 servicios adicionales contratados, con una tasa de cancelación del 44%. En esta franja de clientes, se encuentran las personas que únicamente tenían internet dsl. Además, tenemos que resaltar los usuarios que cancelaron y que tenían un solo servicio. Aunque la tasa de cencelación no es la más alta, el 91% de estos tenían solo línea de teléfono. Las personas que contrataron dls y servicio de teléfono fueron los que menos tiempo perdudaron. Esto sugiere que la falta de un mayor número de servicios adicionales o una percepción de valor insuficiente en los servicios básicos los hace más vulnerables a la fuga."
 
          Otro perfil de churn son las personas mayores de 65 años. Estas tienen una tasa de churn que es aproximadamente el doble de la tasa de los menores de 65 años."
 
          Por último, esta el perfil de churn que se relaciona con las características contractuales. Dentro de este perfil se encuentran aquellos que tenían el tipo de contrato mensual y que pagaban a través de pago electrónico."
-
-         Por lo tanto, hacemos las siguientes recomendaciones para abordar las cancelaciones en función de cada tipo de perfil identificado:
-
+        
+    </p>
+    <h2 class="subtitulos"><i>Recomendaciones</i></h2>
+    <p class="recomendaciones">
+        Por lo tanto, hacemos las siguientes recomendaciones para abordar las cancelaciones en función de cada tipo de perfil identificado:
     </p>
     <ul class="recomendaciones">
         <li>Mejorar la calidad del servicio fibra óptica, realizando una investigación sobre la experiencia del cliente con este servicio. Esto puede lograrse a través de encuestas, monitoreo de la velocidad y la eficiencia del soporte técnico.</li>

@@ -1,6 +1,6 @@
 <div style="display:flex; justify-content: center; align-items: center;">
 
-<img src="src/header.jpg" height=300 width=1000>
+<img src="assets/banner.jpg" height=300 width=1000>
 
 </div>
 
@@ -40,9 +40,17 @@ La **Dashaboard App** tiene dos partes:
 - Scki-learn.
 
 ## **Estructura del proyecto**
-
-_Próximamente_
-
+```
+proyecto/
+│
+├── app.py
+├── index.py
+├── analisis.py
+├── modelo.py #próximamente
+├── servicio_prediccion.py #proximamente
+└── assets/               
+    └── banner.jpg
+```
 ## **Instalación y ejecución del proyecto**
 
 1. En una terminal ejecute el siguiente comando para cloner el repositorio.
