@@ -20,7 +20,7 @@ def render_banner():
         </style>
         
         <div class="banner-container">
-            <img src="https://raw.githubusercontent.com/JGarcia575/dashboard_app/refs/heads/main/src/header.jpg" alt="Banner del Proyecto">
+            <img src="https://raw.githubusercontent.com/JGarcia575/dashboard_app/refs/heads/main/assets/banner.jpg" alt="Banner del Proyecto">
         </div>
         """
 
