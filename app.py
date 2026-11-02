@@ -2,6 +2,14 @@ import streamlit as st
 from footer import render_footer
 from header import render_banner
 
+#Configuración de las páginas
+st.set_page_config(
+    page_title="Telecom Churn Dashboard",
+    page_icon="📊",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
 render_banner()
 
 pages = {
