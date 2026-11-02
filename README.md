@@ -49,7 +49,8 @@ proyecto/
 ├── modelo.py #próximamente
 ├── servicio_prediccion.py #proximamente
 └── assets/               
-    └── banner.jpg
+|    └── banner.jpg
+|___ requirements.txt    
 ```
 ## **Instalación y ejecución del proyecto**
 
