@@ -30,9 +30,9 @@ def render_footer():
             <b>Telecom Churn Analytics & Prediction System</b> | Desarrollado con Streamlit & Python
         </p>
         <div class="footer-links">
-            <a href="https://github.com/tu-usuario/tu-repositorio" target="_blank">Repository</a> •
-            <a href="https://linkedin.com/in/tu-perfil" target="_blank">LinkedIn</a> •
-            <a href="mailto:tu-email@ejemplo.com">Contacto</a>
+            <a href="https://github.com/JGarcia575/dashboard_app" target="_blank">Repository</a> •
+            <a href="https://linkedin.com/in/jimena-soledad" target="_blank">LinkedIn</a> 
+            <!--<a href="mailto:tu-email@ejemplo.com">Contacto</a>-->
         </div>
         <p style="font-size: 0.75rem; color: #9aa0a6; margin-top: 8px;">
             © 2026 Todos los derechos reservados.
