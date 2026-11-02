@@ -1,40 +1,61 @@
 import streamlit as st
 
-st.set_page_config(layout="wide")
+st.title("​📊:rainbow[**DASHBOARD APP**]", text_alignment='center')
 
-st.title(":rainbow[DASHBOARD APP]", text_alignment='center')
-
-st.subheader(":violet[**Descripción del proyecto**]", divider="rainbow")
-
-st.html(
-    '''
-    <div>
-        <p>El proyecto es la continuación de los desafíos <strong>Telecom X Latinoamérica parte 1</strong> y <strong>parte 2</strong>. Aquí tomamos el análisis y modelado predictivo de los dos proyectos mencionados y los ponemos en una aplicación web que consiste de un dasboard interativo hecho con la tecnología Streamlit.</p>
-
-        <p>La empresa de telecomunicaciones <strong>Telecom X Latinoamérica</strong> está enfrentando una alta tasa de cancelación y necesita, en primer lugar, comprender los factores que llevan a la pérdida de clientes y, en segundo lugar, anticiparse al problema de la cancelación.</p> 
-        
-        <p> El <strong>challenge parte 1</strong> consistió en recopilar, procesar y analizar los datos con el objetivo de identificar los factores que influyen en la baja de clientes.  
-            Una vez indentificados los patrones o tendencias que llevan a las personas a cancelar los servicios de la empresa, <strong>en la parte 2</strong> desarrollamos modelos de clasificación capaces de prever qué clientes tienen mayor probabilidad de cancelar sus servicios. 
-        </p>
-
-        <p>El proyecto responde a la necesidad de poner las soluciones encontradas en los desafíos anteriores en una aplicación web que sea de fácil acceso.
-        
-        <p> La Dashboard App tiene dos servicios principales</p>
-
-        <ul>
-            <li> Análisis exploratorio de evasión de clientes.</li>
-            <li> Predicción de evasión.</li>
-        </ul>
-
-        <p>Si querés consultar el código de alguno de los desafíos podes consultar los siguientes enlaces</p>
-        
-        <a href="https://github.com/JGarcia575/challenge_telecomX.git" >Telecom X Latinoamérica parte_1</a>
-        <a href="https://github.com/JGarcia575/challenge_telecomX_parte_2.git" >Telecom X Latinoamérica parte_2</a>
-
-
-    </div>
-
-    '''
+st.markdown(
+    "<p style='text-align: center; color: #6c757d; font-size: 1.2rem;'>Sistema Integral de Análisis y Predicción de Churn</p>", 
+    unsafe_allow_html=True
 )
 
-st.divider()
+st.subheader("📌 Descripción del Proyecto", divider="rainbow")
+
+st.markdown(
+    """
+    Este proyecto es la continuación y evolución de los desafíos **Telecom X Latinoamérica (Parte 1 y Parte 2)**. 
+    Aquí unimos el análisis exploratorio de datos y el modelado predictivo en una aplicación web interactiva 
+    desarrollada con **Streamlit**.
+    """
+)
+
+# Uso de columnas para organizar visualmente el contexto
+col1, col2 = st.columns(2, gap="medium")
+
+with col1:
+    st.markdown("### 🏢 El Reto de Negocio")
+    st.markdown(
+        """
+        La empresa de telecomunicaciones **Telecom X Latinoamérica** enfrenta una alta tasa de cancelación (*churn*). 
+        El objetivo principal es doble:
+        1. **Comprender** en profundidad los factores que impulsan la baja de clientes.
+        2. **Anticiparse** al problema mediante modelos predictivos de Machine Learning.
+        """
+    )
+
+with col2:
+    st.markdown("### 🛠️ Fases del Desarrollo")
+    st.markdown(
+        """
+        * **Challenge Parte 1 (EDA):** Recopilación, limpieza y análisis de patrones de comportamiento para identificar tendencias de cancelación.
+        * **Challenge Parte 2 (ML):** Entrenamiento y evaluación de modelos de clasificación para prever riesgos futuros de pérdida de clientes.
+        """
+    )
+
+st.markdown("---")
+st.subheader("🚀 Servicios Disponibles en la App")
+
+# Tarjetas visuales para los dos servicios principales
+col_s1, col_s2 = st.columns(2)
+with col_s1:
+    st.info("📈 **Análisis Exploratorio de Evasión**\n\nVisualizaciones interactivas y métricas clave sobre el comportamiento histórico de los clientes de telecomunicaciones.")
+with col_s2:
+    st.success("⚡ **Servicio de Predicción**\n\nInterfaz orientada al usuario para consultar la probabilidad de cancelación de clientes utilizando el modelo entrenado.")
+
+st.markdown("---")
+st.subheader("🔗 Enlaces a los Repositorios del Código Fuente")
+
+# Botones modernos para los enlaces de GitHub
+col_l1, col_l2, _ = st.columns([1, 1, 2])
+with col_l1:
+    st.link_button("📂 Telecom X Parte 1 (EDA)", "https://github.com/JGarcia575/challenge_telecomX.git.git", use_container_width=True)
+with col_l2:
+    st.link_button("📂 Telecom X Parte 2 (ML)", "https://github.com/JGarcia575/challenge_telecomX_parte_2.git", use_container_width=True)
