@@ -42,6 +42,8 @@ columnas_categoricas = ["Gender",
                         "Contract",
                         "PaymentMethod"]
 
+df['SeniorCitizen'] = np.where(df['SeniorCitizen'] == 1, 'Mayor que 65', 'Menor que 65')
+
 filtro_1 = st.selectbox("Filtrar por categoría", columnas_categoricas)
 
 df_filtrado = df[filtro_1]
