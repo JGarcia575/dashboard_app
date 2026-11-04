@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import seaborn as sns 
 
-st.set_page_config(layout="wide")
+#st.set_page_config(layout="wide")
 
 st.title("📡​​:violet[**Telecom X: Análisis de Evasión de Clientes**]")
 
@@ -272,9 +272,8 @@ with col5:
      "por el plan fibra óptica se quedaron más tiempo (mediana 15 meses).")
     st.write("- Destacamos la presencia de valores atípicos para los segmentos _'dsl'_ y _'no interner service'_")
 
-st.divider()
+st.info("🤔​:violet[**Conclusiones**]")
 
-st.header("🤔​:violet[**Conclusiones**]")
 st.html("<ul style='font-family: sans-serif; font-weight: bold;'>"
             "<li> ✅ El género no es un factor que influye en la fuga de clientes.</li>"
             "<br>"
@@ -296,14 +295,14 @@ st.html("<ul style='font-family: sans-serif; font-weight: bold;'>"
 
         "</ul>")
 
-st.divider()
 
-st.header("📖​✍️​:violet[**Implicaciones y recomendaciones**]")
+st.info("📖​✍️​:violet[**Implicaciones y recomendaciones**]")
+
 st.html(
     '''
     <style>
         .recomendaciones { 
-                    fontsize: 24px;
+                    font-size: 16px;
                     font-family: sans-serif;
                     font-weight: bold;
         }
