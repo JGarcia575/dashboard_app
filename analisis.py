@@ -19,6 +19,8 @@ df = cargar_datos()
 
 df = df.drop(columns=["customerID", "Partner", "Dependents", "PaperlessBilling"])
 
+df = df.dropna()
+
 if st.checkbox("Mostrar vista previa del dataset"):
     st.dataframe(df.head())
 
