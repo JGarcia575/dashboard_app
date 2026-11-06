@@ -258,7 +258,7 @@ with col4:
 tenure_internet = df[['Tenure', 'InternetService', 'Churn']]
 
 with col5:
-    fig6, ax6 = plt.subplots()
+    fig6, ax6 = plt.subplots(figsize=(6,4))
     ax6 = sns.boxplot(tenure_internet, x='InternetService', y='Tenure', hue='Churn', palette='PiYG_r')
     ax6.set_title('Permanencia por servicio de internet', fontsize=12, fontweight='bold' )
     ax6.set_xlabel('Internet', fontsize=10, fontweight='bold' )
@@ -276,28 +276,111 @@ with col5:
      "por el plan fibra óptica se quedaron más tiempo (mediana 15 meses).")
     st.write("- Destacamos la presencia de valores atípicos para los segmentos _'dsl'_ y _'no interner service'_")
 
+st.divider()
+
+col6, col7 = st.columns(2)
+
+servicios_tenure = pd.DataFrame()
+servicios_tenure['n_servicios'] = servicios['numero_servicios']
+servicios_tenure['tenure'] = df['Tenure']
+servicios_tenure['churn'] = df['Churn']
+servicios_tenure = servicios_tenure.sort_values(by='churn', ascending=True)
+corr = servicios_tenure[['n_servicios', 'tenure']].corr()
+
+with col6: 
+    
+    st.metric("⚠️​**Coeficiente de correlación**⚠️", f'{round(corr.iloc[0,1],2)}', border=True)
+    
+    fig, ax  = plt.subplots(figsize=(6,4))
+
+    sns.boxplot(servicios_tenure, x='n_servicios', y='tenure', hue='churn', palette='PiYG_r', ax=ax)
+
+    ax.set_title('Relación entre permanencia y cantidad de servicios', fontsize=12, fontweight='bold')
+    ax.set_xlabel('Número de servicios', fontsize=10, fontweight='bold')
+    ax.set_ylabel('Permanencia', fontsize=10, fontweight='bold')
+
+    ax.set_ylim(0,80)
+    ax.yaxis.set_minor_locator(ticker.MultipleLocator(5))
+
+    ax.legend(loc='upper right', bbox_to_anchor=(1.30,1.05), ncols=2, frameon=False)
+
+    ax.spines[['top', 'right']].set_visible(False)
+
+    st.pyplot(fig)
+
+st.divider()
+
+facturacion_permanencia = pd.DataFrame()
+facturacion_permanencia['total_facturado'] = df['ChargesTotal']
+facturacion_permanencia['tenure'] = df['Tenure']
+corr = facturacion_permanencia.corr()
+facturacion_permanencia['churn'] = df['Churn']
+
+with col7:
+
+    st.metric("⚠️​**Coeficiende correlación**⚠️", f'{round(corr.iloc[0,1],2)}', border=True)
+
+    fig, ax  = plt.subplots(figsize=(6,4))
+
+    sns.scatterplot(facturacion_permanencia, x='total_facturado', y='tenure', hue='churn', palette='PiYG_r', ax=ax)
+
+    ax.set_title('Relación entre permanencia y facturación total', fontsize=12, fontweight='bold')
+    ax.set_xlabel('Facturación total', fontsize=10, fontweight='bold')
+    ax.set_ylabel('Permanencia', fontsize=10, fontweight='bold')
+
+    ax.set_ylim(0,80)
+    ax.yaxis.set_minor_locator(ticker.MultipleLocator(5))
+
+    ax.legend(loc='upper right', bbox_to_anchor=(1.30,1.05), ncols=2, frameon=False)
+
+    ax.spines[['top', 'right']].set_visible(False)
+
+    st.pyplot(fig)
+
+    
 st.info("🤔​:violet[**Conclusiones**]")
 
-st.html("<ul style='font-family: sans-serif; font-weight: bold;'>"
-            "<li> ✅ El género no es un factor que influye en la fuga de clientes.</li>"
-            "<br>"
-            "<li> ❌ Los clientes mayores a 65 años tienen una alta tasa de renuncia(42%) en comparación con los clientes menores de 65 años(24%).</li>"
-            "<br>"
-            "<li> ❌ El tipo de contrato mensual, el método de pago cheque electrónico y el servicio de fibra óptica tienen tasas de cancelación mayor que el promedio.</li>"
-            "<br>"
-            "<li> ❓​ Los clientes que renunciaron a los servicios de la empresa pagaron mensualmente más que los clientes que no se fueron. Sin embargo, estos primeros pagaron menos de cargos total que los últimos. Esto se relaciona con el tiempo de permanencia de los clientes, y es que los clientes que se dieron de baja permanecieron menos tiempo que los que no se fueron. En promedio, se quedaron 18 meses.</li>"
-            "<br>"
-            "<li> ❌ El porcentaje de renuncia en el número de servicios es muy alto, 44% para aquellos clientes que no contrataron servicios adicionales de internet o de teléfono. También, destacan las tasas de baja entre los clientes que tenían entre 2 a 4 servicios, cuyas tasas son 33%, 36% y 31% para clientes con 2 servicios, 3 servicios y 4 servicios, respectivamente.</li>"
-            "<br>"
-            "<li> ❓​ Los clientes con fibra óptica contrataron desde 1 hasta 8 servicios con porcentajes más alto de contratación para 2, 3, 4 y 5 servicios.</li>"
-            "<br>"
-            "<li> ❓​Los clientes con el servicio de internet dsl contrataron desde el servicio básico hasta 8 servicios, teniendo las tasas más altas de contratación los clientes con 1, 2 y 3 servicios.</li>"
-            "<br>"
-            "<li> ❓​ Los clientes que no tenían internet, tenían exclusivamente el servicio telefónico.</li>"
-            "<br>"
-            "<li> ❌ Los clientes churners con pocos servicios tienden a permanecer menos tiempo en la empresa.</li>"
+col8, _ = st.columns([.8, .2], vertical_alignment='center')
 
-        "</ul>")
+with col8:
+
+    st.success("✅ El género no es un factor que influye en la fuga de clientes")
+
+    st.warning(
+        """
+        ❌ Los clientes mayores a 65 años tienen una alta tasa de renuncia(42%) en comparación con los clientes menores de 65 años(24%).
+    """
+    )
+    st.warning(
+        """
+        ❌ El tipo de contrato mensual, el método de pago cheque electrónico y el servicio de fibra óptica tienen tasas de cancelación mayor que el promedio.
+        """
+    )
+    st.warning(
+        """
+        ❓​ Los clientes que renunciaron a los servicios de la empresa pagaron mensualmente más que los clientes que no se fueron.Sin embargo, estos primeros pagaron menos de cargos total que los últimos. Esto se relaciona con el tiempo de permanencia de los clientes, y es que los clientes que se dieron de baja permanecieron menos tiempo que los que no se fueron. En promedio, se quedaron 18 meses.
+        """
+    )
+    st.warning(
+        """
+        ❓​ Los clientes con fibra óptica contrataron desde 1 hasta 8 servicios con porcentajes más alto de contratación para 2, 3, 4 y 5 servicios.
+        """
+    )
+    st.warning(
+        """
+        ❓​Los clientes con el servicio de internet dsl contrataron desde el servicio básico hasta 8 servicios, teniendo las tasas más altas de contratación los clientes con 1, 2 y 3 servicios.
+        """
+    )
+    st.warning(
+        """
+        ❓​ Los clientes que no tenían internet, tenían exclusivamente el servicio telefónico.
+        """
+    )    
+    st.warning(
+        """
+        ❌ Los clientes churners con pocos servicios tienden a permanecer menos tiempo en la empresa.
+        """
+    )    
 
 
 st.info("📖​✍️​:violet[**Implicaciones y recomendaciones**]")
@@ -317,42 +400,54 @@ st.html(
             font-weight: bold;
         }
 
-    </style>"
-    
-    <p class="recomendaciones">A partir de los resultados se puede identificar que el problema de la evasión de clientes es un problema multicausal cuyas causas están relacionadas con la satisfacción de cada cliente con el servicio o los servicios contratados.
+        .contenedor-responsive {
+            width: 100%; /* Ocupa el ancho disponible */
+            max-width: 800px; /* Límite máximo opcional */
+            border-radius: 20px; /* Radio fijo para contenedores anchos */
+            overflow: hidden; /* Recorta el contenido interno */
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Opcional: añade profundidad */
+        }   
 
-        En los resultados mencionamos cuales son los factores que se relacionan con la diserción de clientes y en este apartado abordamos que implica cada factor.
+    </style>
 
-        El análisis de datos muestra que existen al menos dos perfiles evasores en relación a los tipos de servicios contratados, la permanencia de los clientes, el pago mensual, el total facturado y el número de servicios contratados. Estos tipos de clientes son:
-    </p>
-    <ol class="recomendaciones">
-        <li>Los usuarios que contrataron fibra óptica y que tienen un paquete de servicios extras.</li>
-        <li>Los usuarios que contrataron pocos servicios y de baja permanencia.</li>
-    </ol>
-
-    <h2 class="subtitulos"><i>Usuarios con fibra óptica y número de servicios</i></h2>
-    <p class="recomendaciones">
-        Los primeros adquirieron principalemte entre 2 a 5 servicios extras. Esto indica que son personas con capacidad de pago, dado que los churners son las personas que más pagaron mensualmente. No obstante, se dan de baja porque no se encuentran satisfechos con los servicios contratados, principalmente con la fibra óptica.
-    </p>
-
-    <h2 class="subtitulos"><i>Usuarios con pocos servicios y baja permanencia</i></h2>
-    <p class="recomendaciones">         
-         En los segundos usuarios, destacan aquellos con 0 servicios adicionales contratados, con una tasa de cancelación del 44%. En esta franja de clientes, se encuentran las personas que únicamente tenían internet dsl. Además, tenemos que resaltar los usuarios que cancelaron y que tenían un solo servicio. Aunque la tasa de cencelación no es la más alta, el 91% de estos tenían solo línea de teléfono. Las personas que contrataron dls y servicio de teléfono fueron los que menos tiempo perdudaron. Esto sugiere que la falta de un mayor número de servicios adicionales o una percepción de valor insuficiente en los servicios básicos los hace más vulnerables a la fuga."
-
-         Otro perfil de churn son las personas mayores de 65 años. Estas tienen una tasa de churn que es aproximadamente el doble de la tasa de los menores de 65 años."
-
-         Por último, esta el perfil de churn que se relaciona con las características contractuales. Dentro de este perfil se encuentran aquellos que tenían el tipo de contrato mensual y que pagaban a través de pago electrónico."
+    <div class="contenedor-responsive">
         
-    </p>
-    <h2 class="subtitulos"><i>Recomendaciones</i></h2>
-    <p class="recomendaciones">
-        Por lo tanto, hacemos las siguientes recomendaciones para abordar las cancelaciones en función de cada tipo de perfil identificado:
-    </p>
-    <ul class="recomendaciones">
-        <li>Mejorar la calidad del servicio fibra óptica, realizando una investigación sobre la experiencia del cliente con este servicio. Esto puede lograrse a través de encuestas, monitoreo de la velocidad y la eficiencia del soporte técnico.</li>
-        <li>Ofrecer promociones atractivas para clientes con muy pocos servicios. Esto puede conseguirse a través de paquetes de servicios, por ejemplo internet + teléfono o internet + servicio de streaming. Al adquirir estos paquetes, también se les puede otorgar bonificaciones a los clientes para que tengan un tiempo de prueba.</li>
-        <li>Atención específica al segmento etario mayor de 65 años. Elaborar estrategias comerciales y de servicio técnico exclusivamente para esta porción de demográfica.</li>
-        <li>Optimización de métodos de pagos y contratos. Investigar las razones de la alta tasa de cancelaciónes para clientes con contrato mensual y pago por cheque electrónico. Además, se puede incentivar el pago con los otros tipos de pagos a través de bonificaciones. Por ejemplo, un descuento para aquellos clientes que pagan con tarjeta de crédito.</li>
-    </ul>
+        <p class="recomendaciones">A partir de los resultados se puede identificar que el problema de la evasión de clientes es un problema multicausal cuyas causas están relacionadas con la satisfacción de cada cliente con el servicio o los servicios contratados.
+
+            En los resultados mencionamos cuales son los factores que se relacionan con la diserción de clientes y en este apartado abordamos que implica cada factor.
+
+            El análisis de datos muestra que existen al menos dos perfiles evasores en relación a los tipos de servicios contratados, la permanencia de los clientes, el pago mensual, el total facturado y el número de servicios contratados. Estos tipos de clientes son:
+        </p>
+        <ol class="recomendaciones">
+            <li>Los usuarios que contrataron fibra óptica y que tienen un paquete de servicios extras.</li>
+            <li>Los usuarios que contrataron pocos servicios y de baja permanencia.</li>
+        </ol>
+
+        <h2 class="subtitulos"><i>Usuarios con fibra óptica y número de servicios</i></h2>
+        <p class="recomendaciones">
+            Los primeros adquirieron principalemte entre 2 a 5 servicios extras. Esto indica que son personas con capacidad de pago, dado que los churners son las personas que más pagaron mensualmente. No obstante, se dan de baja porque no se encuentran satisfechos con los servicios contratados, principalmente con la fibra óptica.
+        </p>
+
+        <h2 class="subtitulos"><i>Usuarios con pocos servicios y baja permanencia</i></h2>
+        <p class="recomendaciones">         
+            En los segundos usuarios, destacan aquellos con 0 servicios adicionales contratados, con una tasa de cancelación del 44%. En esta franja de clientes, se encuentran las personas que únicamente tenían internet dsl. Además, tenemos que resaltar los usuarios que cancelaron y que tenían un solo servicio. Aunque la tasa de cencelación no es la más alta, el 91% de estos tenían solo línea de teléfono. Las personas que contrataron dls y servicio de teléfono fueron los que menos tiempo perdudaron. Esto sugiere que la falta de un mayor número de servicios adicionales o una percepción de valor insuficiente en los servicios básicos los hace más vulnerables a la fuga."
+
+            Otro perfil de churn son las personas mayores de 65 años. Estas tienen una tasa de churn que es aproximadamente el doble de la tasa de los menores de 65 años."
+
+            Por último, esta el perfil de churn que se relaciona con las características contractuales. Dentro de este perfil se encuentran aquellos que tenían el tipo de contrato mensual y que pagaban a través de pago electrónico."
+            
+        </p>
+        <h2 class="subtitulos"><i>Recomendaciones</i></h2>
+        <p class="recomendaciones">
+            Por lo tanto, hacemos las siguientes recomendaciones para abordar las cancelaciones en función de cada tipo de perfil identificado:
+        </p>
+        <ul class="recomendaciones">
+            <li>Mejorar la calidad del servicio fibra óptica, realizando una investigación sobre la experiencia del cliente con este servicio. Esto puede lograrse a través de encuestas, monitoreo de la velocidad y la eficiencia del soporte técnico.</li>
+            <li>Ofrecer promociones atractivas para clientes con muy pocos servicios. Esto puede conseguirse a través de paquetes de servicios, por ejemplo internet + teléfono o internet + servicio de streaming. Al adquirir estos paquetes, también se les puede otorgar bonificaciones a los clientes para que tengan un tiempo de prueba.</li>
+            <li>Atención específica al segmento etario mayor de 65 años. Elaborar estrategias comerciales y de servicio técnico exclusivamente para esta porción de demográfica.</li>
+            <li>Optimización de métodos de pagos y contratos. Investigar las razones de la alta tasa de cancelaciónes para clientes con contrato mensual y pago por cheque electrónico. Además, se puede incentivar el pago con los otros tipos de pagos a través de bonificaciones. Por ejemplo, un descuento para aquellos clientes que pagan con tarjeta de crédito.</li>
+        </ul>
+
+    </div>
     '''
 )
