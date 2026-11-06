@@ -258,9 +258,12 @@ with col4:
 tenure_internet = df[['Tenure', 'InternetService', 'Churn']]
 
 with col5:
+    st.subheader(f"**Permanencia por tipo de internet**")
+
     fig6, ax6 = plt.subplots(figsize=(6,4))
     ax6 = sns.boxplot(tenure_internet, x='InternetService', y='Tenure', hue='Churn', palette='PiYG_r')
-    ax6.set_title('Permanencia por servicio de internet', fontsize=12, fontweight='bold' )
+    
+    #ax6.set_title('Permanencia por servicio de internet', fontsize=12, fontweight='bold' )
     ax6.set_xlabel('Internet', fontsize=10, fontweight='bold' )
     ax6.set_ylabel('Permanencia', fontsize=10, fontweight='bold')
 
@@ -288,14 +291,15 @@ servicios_tenure = servicios_tenure.sort_values(by='churn', ascending=True)
 corr = servicios_tenure[['n_servicios', 'tenure']].corr()
 
 with col6: 
-    
+    st.subheader('Relación entre permanencia, n° de servicios y evasión')
+
     st.metric("⚠️​**Coeficiente de correlación**⚠️", f'{round(corr.iloc[0,1],2)}', border=True)
     
     fig, ax  = plt.subplots(figsize=(6,4))
 
     sns.boxplot(servicios_tenure, x='n_servicios', y='tenure', hue='churn', palette='PiYG_r', ax=ax)
 
-    ax.set_title('Relación entre permanencia y cantidad de servicios', fontsize=12, fontweight='bold')
+    #ax.set_title('Relación entre permanencia y cantidad de servicios', fontsize=12, fontweight='bold')
     ax.set_xlabel('Número de servicios', fontsize=10, fontweight='bold')
     ax.set_ylabel('Permanencia', fontsize=10, fontweight='bold')
 
@@ -308,6 +312,11 @@ with col6:
 
     st.pyplot(fig)
 
+    st.warning("⚠️**A tener en cuenta**")
+    st.write("- Existe una asociación positiva entre el número de servicios y la permanencia(r=0.47)")
+    st.write("- Esto significa que a mayor servicios mayor meses de permanencia")
+    st.write("- La relación se cumple para ambos grupos.")
+
 st.divider()
 
 facturacion_permanencia = pd.DataFrame()
@@ -317,6 +326,7 @@ corr = facturacion_permanencia.corr()
 facturacion_permanencia['churn'] = df['Churn']
 
 with col7:
+    st.subheader('Relación entre permanencia, facturación total y evasión')
 
     st.metric("⚠️​**Coeficiende correlación**⚠️", f'{round(corr.iloc[0,1],2)}', border=True)
 
@@ -324,7 +334,7 @@ with col7:
 
     sns.scatterplot(facturacion_permanencia, x='total_facturado', y='tenure', hue='churn', palette='PiYG_r', ax=ax)
 
-    ax.set_title('Relación entre permanencia y facturación total', fontsize=12, fontweight='bold')
+    #ax.set_title('Relación entre permanencia y facturación total', fontsize=12, fontweight='bold')
     ax.set_xlabel('Facturación total', fontsize=10, fontweight='bold')
     ax.set_ylabel('Permanencia', fontsize=10, fontweight='bold')
 
@@ -337,13 +347,15 @@ with col7:
 
     st.pyplot(fig)
 
-    
+    st.warning("⚠️**Para tener en cuenta**")
+    st.write("- Existe una asociación positiva la facturación total y la permanencia(r=0.83).")
+    st.write("- Esto significa que a mayor facturación mayor meses de permanencia.")
+    st.write("- La relación se cumple para ambos grupos.")
+
 st.info("🤔​:violet[**Conclusiones**]")
 
-col8, _ = st.columns([.8, .2], vertical_alignment='center')
-
-with col8:
-
+with st.container(border=True, width='content', vertical_alignment='center', gap='small'):
+    
     st.success("✅ El género no es un factor que influye en la fuga de clientes")
 
     st.warning(
