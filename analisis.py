@@ -375,12 +375,12 @@ with st.container(border=True, width='content', vertical_alignment='center', gap
     )
     st.warning(
         """
-        ❓​ Los clientes con fibra óptica contrataron desde 1 hasta 8 servicios con porcentajes más alto de contratación para 2, 3, 4 y 5 servicios.
+        ❓​ Los clientes con fibra óptica contrataron desde 1 hasta 8 servicios.
         """
     )
     st.warning(
         """
-        ❓​Los clientes con el servicio de internet dsl contrataron desde el servicio básico hasta 8 servicios, teniendo las tasas más altas de contratación los clientes con 1, 2 y 3 servicios.
+        ❓​Los clientes con el servicio de internet dsl contrataron desde el servicio básico hasta 8 servicios.
         """
     )
     st.warning(
