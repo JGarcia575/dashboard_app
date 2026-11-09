@@ -4,7 +4,7 @@ from header import render_banner
 
 #Configuración de las páginas
 st.set_page_config(
-    page_title="Telecom Churn Dashboard",
+    page_title="Telecom Latinoamérica Churn Dashboard",
     page_icon="📊",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -17,7 +17,8 @@ pages = {
         st.Page("index.py", title="Dashboard App")
     ],
     "Servicios": [
-        st.Page("analisis.py", title="Analisis exploratorio")
+        st.Page("analisis.py", title="Analisis exploratorio"),
+        st.Page("conclusiones_recomendaciones.py", title="Conclusiones y recomendaciones")
     ]
 }
 
