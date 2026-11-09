@@ -4,12 +4,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import seaborn as sns 
+from utils import (v_cramer_corregido, correlacion_numericas, graficos_correlacion)
 
-st.set_page_config(layout="wide")
 
-st.title("📡​​:violet[**Telecom X: Análisis de Evasión de Clientes**]")
+#st.set_page_config(layout="wide")
 
-st.header("🔎 :violet[**Análisis Exploratorio de Datos (EDA)**]​​")
+st.title("📡​​:green[**Telecom X: Análisis de Evasión de Clientes**]", text_alignment='center')
+
+st.header("🔎 :green[**Análisis Exploratorio de Datos (EDA)**]​​", text_alignment='left')
 
 @st.cache_data
 def cargar_datos():
@@ -19,16 +21,18 @@ df = cargar_datos()
 
 df = df.drop(columns=["customerID", "Partner", "Dependents", "PaperlessBilling"])
 
+df = df.dropna()
+
 if st.checkbox("Mostrar vista previa del dataset"):
     st.dataframe(df.head())
 
 evasion_no, evasion_yes = df['Churn'].value_counts(normalize=True)
 
-st.subheader(":violet[**Proporción de Clientes Evasores**]")
+st.subheader(":green[**Proporción de Clientes Evasores**]")
 
-col1, col2 = st.columns(2)
-col1.metric("⚠️​**Se fueron**⚠️", f'{round(evasion_yes * 100)} %', border=True)
-col2.metric("💖​ **Se quedaron**",f' {round(evasion_no * 100)} %', border=True)
+col1, col2 = st.columns(2, border=True)
+col1.metric("⚠️​**Se fueron**⚠️", f'{round(evasion_yes * 100)} %', border=False)
+col2.metric("💖​ **Se quedaron**",f' {round(evasion_no * 100)} %', border=False)
 
 st.error(f'​🚨​ El porcentaje de clientes que se dieron de baja es aproximadamente **{round(evasion_yes * 100)}%**, una métrica que llama la atención.')
 
@@ -41,6 +45,8 @@ columnas_categoricas = ["Gender",
                         "InternetService",
                         "Contract",
                         "PaymentMethod"]
+
+df['SeniorCitizen'] = np.where(df['SeniorCitizen'] == 1, 'Mayor que 65', 'Menor que 65')
 
 filtro_1 = st.selectbox("Filtrar por categoría", columnas_categoricas)
 
@@ -90,7 +96,7 @@ for categoria in tasa_evasion.index:
     else:
         factores_retencion.append(texto_categoria)
 
-col_diag1, col_diag2 = st.columns(2)
+col_diag1, col_diag2 = st.columns(2, border=True)
 
 with col_diag1:
     if factores_riesgo:
@@ -111,23 +117,18 @@ with col_diag2:
 st.divider()
 
 
-st.warning(" ⚠️Por favor vaya a la sección recomendaciones⚠️")
-
-st.divider()
-
 columnas_numericas = ["Tenure", "ChargesMonthly", "ChargesTotal"]
+filtro_2 = st.selectbox("Filtrar por categoría", columnas_numericas)
 
-col1, col2 = st.columns([.5, .5])
+col1, col2 = st.columns(2, vertical_alignment='center')
 
 with col1:
-    filtro_2 = st.selectbox("Filtrar por categoría", columnas_numericas)
-
     st.subheader(f"**Evasión por {filtro_2}**")
 
     fig3, ax3 = plt.subplots(figsize=(6,4))
 
     ax3 = sns.boxplot(df, x='Churn', y=filtro_2, hue='Churn', palette='PiYG_r')
-    ax3.set_title(f'Evasión por {filtro_2}', fontsize=12, fontweight='bold')
+    #ax3.set_title(f'Evasión por {filtro_2}', fontsize=12, fontweight='bold')
     ax3.set_xlabel('Cancelación', fontsize=10, fontweight='bold')
     ax3.set_ylabel(f'{filtro_2}', fontsize=10, fontweight='bold')
 
@@ -138,14 +139,12 @@ with col1:
 
     st.pyplot(fig3)
 
+with col2:
     st.warning("⚠️**Atención**⚠️")
     st.write("- Alertamos la presencia de **valores atípicos** para las variables **'_Tenure_'** y **'_ChargeTotal_'**.")
     st.write("- Hay que elegir un tratamiento para los valores atípicos o tomar como parámetro la mediana.")
 
 st.divider()
-
-#st.subheader(f"**Cantidad de servicios por estado**")
-
 
 servicios = df[['PhoneService', 'MultipleLines', 'OnlineSecurity', 'OnlineBackup', 'DeviceProtection',
        'TechSupport', 'StreamingTV', 'StreamingMovies']]
@@ -169,14 +168,14 @@ servicios_columnas.append('InternetService')
 
 servicios['numero_servicios'] = servicios[servicios_columnas].sum(axis=1)
 
-col2, col3 = st.columns([.5, .5])
+col3, col4 = st.columns([.5, .5])
 
-with col2:
+with col3:
     st.subheader(f"**Cantidad de servicios por estado**")
 
     fig4, ax4 = plt.subplots(figsize=(6,4))
     ax4 = sns.boxplot(servicios, x='Churn', y='numero_servicios', hue='Churn', palette='PiYG_r')
-    ax4.set_title('Número de servicios por cliente ', fontsize=12, fontweight='bold' )
+    #ax4.set_title('Número de servicios por cliente ', fontsize=12, fontweight='bold' )
     ax4.set_xlabel('Baja', fontsize=10, fontweight='bold' )
     ax4.set_ylabel('Cantidad de servicios', fontsize=10, fontweight='bold')
 
@@ -187,32 +186,31 @@ with col2:
 
     st.pyplot(fig4)
 
-    st.success("Factor de retención", icon="✅")
-
-    st.write("- Los clientes que se fueron y los que se quedaron no difieren \n \
-           en el número de servicios")
-
-#st.divider()
-
-#st.subheader("**Número de servicios y evasión**")
-
 churn_servicios = pd.crosstab(servicios['numero_servicios'], servicios['Churn'], normalize='index')
 
 churn_servicios.rename({0:'No', 1:'Yes'}, axis=1, inplace=True)
 
-with col3:
+with col4:
     st.subheader("**Número de servicios y evasión**")
 
     fig5, ax5 = plt.subplots(figsize=(6, 4))
     sns.barplot(data=churn_servicios, x=churn_servicios.index, y=churn_servicios['Yes'], hue=churn_servicios['Yes'], palette='Reds_d')
     ax5.axhline(y=evasion_yes, linestyle='dashed', linewidth=1.5, color='red')
-    ax5.set_title('Tasa de evasión por número de servicios')
+    #ax5.set_title('Tasa de evasión por número de servicios')
     ax5.set_xlabel('Número de servicios')
     ax5.set_ylabel("Tasa de evasión(%)")
     ax5.set_ylim(0,1)
 
     st.pyplot(fig5)
 
+col_diag3, col_diag4 = st.columns(2, border=True)
+
+with col_diag3:
+    st.success("Factor de retención", icon="✅")
+    st.write("- Los clientes que se fueron y los que se quedaron no difieren \n \
+           en el número de servicios")
+
+with col_diag4:
     st.error("⚠️**Factores de Alto Riesgo**")
     st.write("- Los clientes que tienen entre **2 a 5 servicios** tienen la mayor tasa de baja.")
 
@@ -232,7 +230,7 @@ with col4:
 
     fig5, ax5 = plt.subplots(figsize=(6,4))
     ax5 = sns.boxplot(sub_servicios, x='Internet', y='numero_servicios', palette='Reds_d')
-    ax5.set_title('Distribución de servicios por tipo de internet', fontsize=12, fontweight='bold' )
+    #ax5.set_title('Distribución de servicios por tipo de internet', fontsize=12, fontweight='bold' )
     ax5.set_xlabel('Internet', fontsize=10, fontweight='bold' )
     ax5.set_ylabel('Cantidad de servicios', fontsize=10, fontweight='bold')
 
@@ -243,20 +241,15 @@ with col4:
 
     st.pyplot(fig5)
 
-    st.error("⚠️**Factor de fuga**")
-
-    st.write("- Los clientes con el plan de internet '_fibra óptica_' contrataron entre **2 a 6 servicios**.")
-    st.write("- Los clientes con el plan '_dls_' contrataron entre **1 a 4 servicios**. ")
-    st.write("- Los clientes que no contrataron internet tienen un solo servicio, posiblemente la línea telefónica.\n \
-                El dato atípico puede corresponden a un cliente que contrato varias líneas telefónica." )
-
-
 tenure_internet = df[['Tenure', 'InternetService', 'Churn']]
 
 with col5:
-    fig6, ax6 = plt.subplots()
+    st.subheader(f"**Permanencia por tipo de internet**")
+
+    fig6, ax6 = plt.subplots(figsize=(6,4))
     ax6 = sns.boxplot(tenure_internet, x='InternetService', y='Tenure', hue='Churn', palette='PiYG_r')
-    ax6.set_title('Permanencia por servicio de internet', fontsize=12, fontweight='bold' )
+    
+    #ax6.set_title('Permanencia por servicio de internet', fontsize=12, fontweight='bold' )
     ax6.set_xlabel('Internet', fontsize=10, fontweight='bold' )
     ax6.set_ylabel('Permanencia', fontsize=10, fontweight='bold')
 
@@ -267,89 +260,279 @@ with col5:
 
     st.pyplot(fig6)
 
+col_diag5, col_diag6 = st.columns(2, border=True)
+
+with col_diag5:
+    st.error("⚠️**Factor de fuga**")
+    st.write("- Los clientes con el plan de internet '_fibra óptica_' contrataron entre **2 a 6 servicios**.")
+    st.write("- Los clientes con el plan '_dls_' contrataron entre **1 a 4 servicios**. ")
+    st.write("- Los clientes que no contrataron internet tienen un solo servicio, posiblemente la línea telefónica.\n \
+                El dato atípico puede corresponden a un cliente que contrato varias líneas telefónica." )
+
+with col_diag6:
     st.error("⚠️**A tener en cuenta**")
     st.write("- Entre los distintos tipos de servicios de internet, los que optaron " \
      "por el plan fibra óptica se quedaron más tiempo (mediana 15 meses).")
     st.write("- Destacamos la presencia de valores atípicos para los segmentos _'dsl'_ y _'no interner service'_")
 
-st.divider()
-
-st.header("🤔​:violet[**Conclusiones**]")
-st.html("<ul style='font-family: sans-serif; font-weight: bold;'>"
-            "<li> ✅ El género no es un factor que influye en la fuga de clientes.</li>"
-            "<br>"
-            "<li> ❌ Los clientes mayores a 65 años tienen una alta tasa de renuncia(42%) en comparación con los clientes menores de 65 años(24%).</li>"
-            "<br>"
-            "<li> ❌ El tipo de contrato mensual, el método de pago cheque electrónico y el servicio de fibra óptica tienen tasas de cancelación mayor que el promedio.</li>"
-            "<br>"
-            "<li> ❓​ Los clientes que renunciaron a los servicios de la empresa pagaron mensualmente más que los clientes que no se fueron. Sin embargo, estos primeros pagaron menos de cargos total que los últimos. Esto se relaciona con el tiempo de permanencia de los clientes, y es que los clientes que se dieron de baja permanecieron menos tiempo que los que no se fueron. En promedio, se quedaron 18 meses.</li>"
-            "<br>"
-            "<li> ❌ El porcentaje de renuncia en el número de servicios es muy alto, 44% para aquellos clientes que no contrataron servicios adicionales de internet o de teléfono. También, destacan las tasas de baja entre los clientes que tenían entre 2 a 4 servicios, cuyas tasas son 33%, 36% y 31% para clientes con 2 servicios, 3 servicios y 4 servicios, respectivamente.</li>"
-            "<br>"
-            "<li> ❓​ Los clientes con fibra óptica contrataron desde 1 hasta 8 servicios con porcentajes más alto de contratación para 2, 3, 4 y 5 servicios.</li>"
-            "<br>"
-            "<li> ❓​Los clientes con el servicio de internet dsl contrataron desde el servicio básico hasta 8 servicios, teniendo las tasas más altas de contratación los clientes con 1, 2 y 3 servicios.</li>"
-            "<br>"
-            "<li> ❓​ Los clientes que no tenían internet, tenían exclusivamente el servicio telefónico.</li>"
-            "<br>"
-            "<li> ❌ Los clientes churners con pocos servicios tienden a permanecer menos tiempo en la empresa.</li>"
-
-        "</ul>")
 
 st.divider()
 
-st.header("📖​✍️​:violet[**Implicaciones y recomendaciones**]")
+col6, col7 = st.columns(2,  vertical_alignment='center')
+
+servicios_tenure = pd.DataFrame()
+servicios_tenure['n_servicios'] = servicios['numero_servicios']
+servicios_tenure['tenure'] = df['Tenure']
+servicios_tenure['churn'] = df['Churn']
+servicios_tenure = servicios_tenure.sort_values(by='churn', ascending=True)
+corr = servicios_tenure[['n_servicios', 'tenure']].corr()
+
+with col6: 
+    st.subheader('Relación entre permanencia, n° de servicios y evasión')
+
+    st.metric("⚠️​**Coeficiente de correlación**⚠️", f'{round(corr.iloc[0,1],2)}')
+    
+    fig, ax  = plt.subplots(figsize=(6,4))
+
+    sns.boxplot(servicios_tenure, x='n_servicios', y='tenure', hue='churn', palette='PiYG_r', ax=ax)
+
+    #ax.set_title('Relación entre permanencia y cantidad de servicios', fontsize=12, fontweight='bold')
+    ax.set_xlabel('Número de servicios', fontsize=10, fontweight='bold')
+    ax.set_ylabel('Permanencia', fontsize=10, fontweight='bold')
+
+    ax.set_ylim(0,80)
+    ax.yaxis.set_minor_locator(ticker.MultipleLocator(5))
+
+    ax.legend(loc='upper right', bbox_to_anchor=(1.30,1.05), ncols=2, frameon=False)
+
+    ax.spines[['top', 'right']].set_visible(False)
+
+    st.pyplot(fig)
+
+facturacion_permanencia = pd.DataFrame()
+facturacion_permanencia['total_facturado'] = df['ChargesTotal']
+facturacion_permanencia['tenure'] = df['Tenure']
+corr = facturacion_permanencia.corr()
+facturacion_permanencia['churn'] = df['Churn']
+
+with col7:
+    st.subheader('Relación entre permanencia, facturación total y evasión')
+
+    st.metric("⚠️​**Coeficiende correlación**⚠️", f'{round(corr.iloc[0,1],2)}')
+
+    fig, ax  = plt.subplots(figsize=(6,4))
+
+    sns.scatterplot(facturacion_permanencia, x='total_facturado', y='tenure', hue='churn', palette='PiYG_r', ax=ax)
+
+    #ax.set_title('Relación entre permanencia y facturación total', fontsize=12, fontweight='bold')
+    ax.set_xlabel('Facturación total', fontsize=10, fontweight='bold')
+    ax.set_ylabel('Permanencia', fontsize=10, fontweight='bold')
+
+    ax.set_ylim(0,80)
+    ax.yaxis.set_minor_locator(ticker.MultipleLocator(5))
+
+    ax.legend(loc='upper right', bbox_to_anchor=(1.30,1.05), ncols=2, frameon=False)
+
+    ax.spines[['top', 'right']].set_visible(False)
+
+    st.pyplot(fig)
+
+col_diag7, col_diag8 = st.columns(2, border=True)
+
+with col_diag7:
+    st.warning("⚠️**A tener en cuenta**")
+    st.write("- Existe una asociación positiva entre el número de servicios y la permanencia(r=0.47)")
+    st.write("- Esto significa que a mayor servicios mayor meses de permanencia")
+    st.write("- La relación se cumple para ambos grupos.")
+
+with col_diag8:
+    st.warning("⚠️**Para tener en cuenta**")
+    st.write("- Existe una asociación positiva la facturación total y la permanencia(r=0.83).")
+    st.write("- Esto significa que a mayor facturación mayor meses de permanencia.")
+    st.write("- La relación se cumple para ambos grupos.")
+
+st.divider()
+
+#Elegimos las columnas categóricas
+columnas_categoricas = df.select_dtypes(include='object').columns
+
+#Creamos la matriz que guardará los coeficientes de V de Cramer
+v_cramer_matrix = pd.DataFrame(index=columnas_categoricas, columns=columnas_categoricas)
+
+#Guardamos en la matriz anterior el coeficiente para cada par de variables categóricas
+for col1 in columnas_categoricas:
+    for col2 in columnas_categoricas:
+      v_cramer_matrix.loc[col1, col2] = v_cramer_corregido(df[col1], df[col2])
+
+#Filtro para elegir las variables categóricas que tienen una relación más fuerte con Churn
+target_var = 'Churn'
+v_relevantes = v_cramer_matrix.index[abs(v_cramer_matrix[target_var]) >= 0.20].tolist()
+
+#Creamos otra matriz con solo los coeficientes de las variables
+#más fuertemente relacionadas con Churn
+v_filtrada = v_cramer_matrix.loc[v_relevantes, v_relevantes]
+
+#Creamos una máscara booleana para ocultar el triángulo superior
+#de la matriz anterior
+mascara = np.triu(np.ones_like(v_filtrada, dtype=bool))
+
+col8, col9 = st.columns(2)
+with col8:
+    st.subheader('Matriz de V de Cramer para Variables Categóricas')
+    #Gráfico de la matriz filtrada
+    fig, ax = plt.subplots(figsize=(12, 10))
+    sns.heatmap(v_filtrada.astype(float), annot=True, cmap='coolwarm', fmt=".2f", mask=mascara, ax=ax)
+    st.pyplot(fig)
+
+matriz_corr_num = correlacion_numericas(df)
+
+with col9:
+    st.subheader('Matriz de correlación entre Variables Numéricas')
+    fig = graficos_correlacion(matriz_corr_num)
+    st.pyplot(fig)
+
+col_diag9, col_diag10 = st.columns(2, border=True)
+
+with col_diag9:
+    
+    st.warning("⚠️**Para tener en cuenta**")
+    st.write("- Existe una asociación positiva entre la evasión y:\n " \
+    "- El servicio de internet.\n" \
+    "- Los servicios extras de internet. \n"\
+    "- El tipo de contrato.\n" \
+    "- El método de pago." 
+    )
+    st.write("- La fuerza de las relaciones oscilan entre débil y moderada")
+
+with col_diag10:
+    st.warning("⚠️**Para tener en cuenta**")
+    st.write("- Existe una asociación positiva entre la evasión y:\n " \
+        "- Charges Monthly. \n"\
+        "- Charges Total.\n" \
+        "- Cuentas diarias." 
+        )
+    st.write("- Existe una asociación negativa entre la evasión y tenure")
+
+st.divider()
+
+st.info("🤖​​:green[**Variables elegidas para el modelo predictivo**]")
+st.write("A partir del EDA elegimos las siguientes variables como las más relevantes para el modelo predictivo:")
+col10, col11 = st.columns(2, border=True)
+with col10:
+    st.write("​🅰️​ **​Variables categóricas**")
+    st.write("- El tipo de servicio de internet.\n - Los servicios extra de internet.\n - El tipo de contrado.\n - La forma de pago.")
+with col11:
+    st.write("🅱️**Variables numéricas**")
+    st.write("- Tenure. \n - Charges Total. \n - Charges Monthly. ")
+
+st.info("🤔​:green[**Conclusiones**]")
+
+with st.container(border=True, width='content', vertical_alignment='center', gap='small'):
+    
+    st.success("✅ El género no es un factor que influye en la fuga de clientes")
+
+    st.warning(
+        """
+        ❌ Los clientes mayores a 65 años tienen una alta tasa de renuncia(42%) en comparación con los clientes menores de 65 años(24%).
+    """
+    )
+    st.warning(
+        """
+        ❌ El tipo de contrato mensual, el método de pago cheque electrónico y el servicio de fibra óptica tienen tasas de cancelación mayor que el promedio.
+        """
+    )
+    st.warning(
+        """
+        ❓​ Los clientes que renunciaron a los servicios de la empresa pagaron mensualmente más que los clientes que no se fueron.Sin embargo, estos primeros pagaron menos de cargos total que los últimos. Esto se relaciona con el tiempo de permanencia de los clientes, y es que los clientes que se dieron de baja permanecieron menos tiempo que los que no se fueron. En promedio, se quedaron 18 meses.
+        """
+    )
+    st.warning(
+        """
+        ❓​ Los clientes con fibra óptica contrataron desde 1 hasta 8 servicios.
+        """
+    )
+    st.warning(
+        """
+        ❓​Los clientes con el servicio de internet dsl contrataron desde el servicio básico hasta 8 servicios.
+        """
+    )
+    st.warning(
+        """
+        ❓​ Los clientes que no tenían internet, tenían exclusivamente el servicio telefónico.
+        """
+    )    
+    st.warning(
+        """
+        ❌ Los clientes churners con pocos servicios tienden a permanecer menos tiempo en la empresa.
+        """
+    )    
+
+
+st.info("📖​✍️​:green[**Implicaciones y recomendaciones**]")
+
 st.html(
     '''
     <style>
         .recomendaciones { 
-                    fontsize: 24px;
+                    font-size: 16px;
                     font-family: sans-serif;
                     font-weight: bold;
         }
 
         .subtitulos {
-            color: violet;
+            color: green;
             font-family: sans-serif;
             font-weight: bold;
         }
 
-    </style>"
-    
-    <p class="recomendaciones">A partir de los resultados se puede identificar que el problema de la evasión de clientes es un problema multicausal cuyas causas están relacionadas con la satisfacción de cada cliente con el servicio o los servicios contratados.
+        .contenedor-responsive {
+            width: 100%; /* Ocupa el ancho disponible */
+            max-width: 800px; /* Límite máximo opcional */
+            border-radius: 20px; /* Radio fijo para contenedores anchos */
+            overflow: hidden; /* Recorta el contenido interno */
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Opcional: añade profundidad */
+        }   
 
-        En los resultados mencionamos cuales son los factores que se relacionan con la diserción de clientes y en este apartado abordamos que implica cada factor.
+    </style>
 
-        El análisis de datos muestra que existen al menos dos perfiles evasores en relación a los tipos de servicios contratados, la permanencia de los clientes, el pago mensual, el total facturado y el número de servicios contratados. Estos tipos de clientes son:
-    </p>
-    <ol class="recomendaciones">
-        <li>Los usuarios que contrataron fibra óptica y que tienen un paquete de servicios extras.</li>
-        <li>Los usuarios que contrataron pocos servicios y de baja permanencia.</li>
-    </ol>
-
-    <h2 class="subtitulos"><i>Usuarios con fibra óptica y número de servicios</i></h2>
-    <p class="recomendaciones">
-        Los primeros adquirieron principalemte entre 2 a 5 servicios extras. Esto indica que son personas con capacidad de pago, dado que los churners son las personas que más pagaron mensualmente. No obstante, se dan de baja porque no se encuentran satisfechos con los servicios contratados, principalmente con la fibra óptica.
-    </p>
-
-    <h2 class="subtitulos"><i>Usuarios con pocos servicios y baja permanencia</i></h2>
-    <p class="recomendaciones">         
-         En los segundos usuarios, destacan aquellos con 0 servicios adicionales contratados, con una tasa de cancelación del 44%. En esta franja de clientes, se encuentran las personas que únicamente tenían internet dsl. Además, tenemos que resaltar los usuarios que cancelaron y que tenían un solo servicio. Aunque la tasa de cencelación no es la más alta, el 91% de estos tenían solo línea de teléfono. Las personas que contrataron dls y servicio de teléfono fueron los que menos tiempo perdudaron. Esto sugiere que la falta de un mayor número de servicios adicionales o una percepción de valor insuficiente en los servicios básicos los hace más vulnerables a la fuga."
-
-         Otro perfil de churn son las personas mayores de 65 años. Estas tienen una tasa de churn que es aproximadamente el doble de la tasa de los menores de 65 años."
-
-         Por último, esta el perfil de churn que se relaciona con las características contractuales. Dentro de este perfil se encuentran aquellos que tenían el tipo de contrato mensual y que pagaban a través de pago electrónico."
+    <div class="contenedor-responsive">
         
-    </p>
-    <h2 class="subtitulos"><i>Recomendaciones</i></h2>
-    <p class="recomendaciones">
-        Por lo tanto, hacemos las siguientes recomendaciones para abordar las cancelaciones en función de cada tipo de perfil identificado:
-    </p>
-    <ul class="recomendaciones">
-        <li>Mejorar la calidad del servicio fibra óptica, realizando una investigación sobre la experiencia del cliente con este servicio. Esto puede lograrse a través de encuestas, monitoreo de la velocidad y la eficiencia del soporte técnico.</li>
-        <li>Ofrecer promociones atractivas para clientes con muy pocos servicios. Esto puede conseguirse a través de paquetes de servicios, por ejemplo internet + teléfono o internet + servicio de streaming. Al adquirir estos paquetes, también se les puede otorgar bonificaciones a los clientes para que tengan un tiempo de prueba.</li>
-        <li>Atención específica al segmento etario mayor de 65 años. Elaborar estrategias comerciales y de servicio técnico exclusivamente para esta porción de demográfica.</li>
-        <li>Optimización de métodos de pagos y contratos. Investigar las razones de la alta tasa de cancelaciónes para clientes con contrato mensual y pago por cheque electrónico. Además, se puede incentivar el pago con los otros tipos de pagos a través de bonificaciones. Por ejemplo, un descuento para aquellos clientes que pagan con tarjeta de crédito.</li>
-    </ul>
+        <p class="recomendaciones">A partir de los resultados se puede identificar que el problema de la evasión de clientes es un problema multicausal cuyas causas están relacionadas con la satisfacción de cada cliente con el servicio o los servicios contratados.
+
+            En los resultados mencionamos cuales son los factores que se relacionan con la diserción de clientes y en este apartado abordamos que implica cada factor.
+
+            El análisis de datos muestra que existen al menos dos perfiles evasores en relación a los tipos de servicios contratados, la permanencia de los clientes, el pago mensual, el total facturado y el número de servicios contratados. Estos tipos de clientes son:
+        </p>
+        <ol class="recomendaciones">
+            <li>Los usuarios que contrataron fibra óptica y que tienen un paquete de servicios extras.</li>
+            <li>Los usuarios que contrataron pocos servicios y de baja permanencia.</li>
+        </ol>
+
+        <h2 class="subtitulos"><i>Usuarios con fibra óptica y número de servicios</i></h2>
+        <p class="recomendaciones">
+            Los primeros adquirieron principalemte entre 2 a 5 servicios extras. Esto indica que son personas con capacidad de pago, dado que los churners son las personas que más pagaron mensualmente. No obstante, se dan de baja porque no se encuentran satisfechos con los servicios contratados, principalmente con la fibra óptica.
+        </p>
+
+        <h2 class="subtitulos"><i>Usuarios con pocos servicios y baja permanencia</i></h2>
+        <p class="recomendaciones">         
+            En los segundos usuarios, destacan aquellos con 0 servicios adicionales contratados, con una tasa de cancelación del 44%. En esta franja de clientes, se encuentran las personas que únicamente tenían internet dsl. Además, tenemos que resaltar los usuarios que cancelaron y que tenían un solo servicio. Aunque la tasa de cencelación no es la más alta, el 91% de estos tenían solo línea de teléfono. Las personas que contrataron dls y servicio de teléfono fueron los que menos tiempo perdudaron. Esto sugiere que la falta de un mayor número de servicios adicionales o una percepción de valor insuficiente en los servicios básicos los hace más vulnerables a la fuga."
+
+            Otro perfil de churn son las personas mayores de 65 años. Estas tienen una tasa de churn que es aproximadamente el doble de la tasa de los menores de 65 años."
+
+            Por último, esta el perfil de churn que se relaciona con las características contractuales. Dentro de este perfil se encuentran aquellos que tenían el tipo de contrato mensual y que pagaban a través de pago electrónico."
+            
+        </p>
+        <h2 class="subtitulos"><i>Recomendaciones</i></h2>
+        <p class="recomendaciones">
+            Por lo tanto, hacemos las siguientes recomendaciones para abordar las cancelaciones en función de cada tipo de perfil identificado:
+        </p>
+        <ul class="recomendaciones">
+            <li>Mejorar la calidad del servicio fibra óptica, realizando una investigación sobre la experiencia del cliente con este servicio. Esto puede lograrse a través de encuestas, monitoreo de la velocidad y la eficiencia del soporte técnico.</li>
+            <li>Ofrecer promociones atractivas para clientes con muy pocos servicios. Esto puede conseguirse a través de paquetes de servicios, por ejemplo internet + teléfono o internet + servicio de streaming. Al adquirir estos paquetes, también se les puede otorgar bonificaciones a los clientes para que tengan un tiempo de prueba.</li>
+            <li>Atención específica al segmento etario mayor de 65 años. Elaborar estrategias comerciales y de servicio técnico exclusivamente para esta porción de demográfica.</li>
+            <li>Optimización de métodos de pagos y contratos. Investigar las razones de la alta tasa de cancelaciónes para clientes con contrato mensual y pago por cheque electrónico. Además, se puede incentivar el pago con los otros tipos de pagos a través de bonificaciones. Por ejemplo, un descuento para aquellos clientes que pagan con tarjeta de crédito.</li>
+        </ul>
+
+    </div>
     '''
 )
