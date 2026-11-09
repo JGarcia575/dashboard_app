@@ -480,7 +480,7 @@ st.html(
         }
 
         .subtitulos {
-            color: violet;
+            color: green;
             font-family: sans-serif;
             font-weight: bold;
         }
